@@ -1,0 +1,22 @@
+{
+  "name": "ucenter-plugin-pkuhole",
+  "version": "0.0.1",
+  "private": true,
+  "description": "uCenter plugin",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thezzisu/ucenter-plugin-pkuhole.git"
+  },
+  "bugs": {
+    "url": "https://github.com/thezzisu/ucenter-plugin-pkuhole/issues"
+  },
+  "license": "MIT",
+  "type": "module",
+  "main": "lib/index.js",
+  "peerDependencies": {
+    "@ucenter/server": "*"
+  },
+  "devDependencies": {
+    "typescript": "^4.9.3"
+  }
+}
