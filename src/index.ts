@@ -9,6 +9,7 @@ import {
   IHole
 } from './pkuhole.js'
 import { IncomingHttpHeaders } from 'http'
+import type { GetRouterDescriptor } from 'fastify-typeful'
 
 export interface IHoleDoc {
   _id: number
@@ -50,8 +51,6 @@ function transformHeaders(headers: IncomingHttpHeaders): HeadersInit {
   }
 }
 
-let archiveCursor = 0
-
 function safeParse(str: string) {
   const num = parseInt(str)
   if (Number.isSafeInteger(num)) return num
@@ -90,34 +89,22 @@ const holeRouter = rootChain
           { headers: transformHeaders(req.headers) }
         )
         try {
-          const newHoles = resp.data
-            .map((hole) => ({
-              _id: safeParse(hole.pid),
-              data: hole
-            }))
-            .filter((hole) => hole._id > archiveCursor)
+          const newHoles = resp.data.map((hole) => ({
+            _id: safeParse(hole.pid),
+            data: hole
+          }))
           if (newHoles instanceof Array) {
             const result = await hole.collection.bulkWrite(
               newHoles.map(({ _id, data }) => ({
                 updateOne: {
                   filter: { _id },
-                  update: {
-                    $set: { data }
-                  },
+                  update: { $set: { data } },
                   upsert: true
                 }
               })),
               { ordered: false }
             )
-            if (result.isOk()) {
-              archiveCursor = newHoles.reduce(
-                (acc, hole) => Math.max(acc, hole._id),
-                archiveCursor
-              )
-              app.logger.info(
-                `ArchiveCursor=${archiveCursor} (+${result.modifiedCount})`
-              )
-            }
+            app.logger.info(`Archiver +${result.insertedCount}`)
           }
         } catch (err) {
           app.logger.error(err)
@@ -212,3 +199,7 @@ const plugin: Plugin = (hooks) => {
 }
 
 export default plugin
+
+export type HoleDescriptor = GetRouterDescriptor<typeof holeRouter>
+
+export * from './pkuhole.js'
