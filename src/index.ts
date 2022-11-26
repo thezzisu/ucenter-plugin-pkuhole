@@ -25,8 +25,10 @@ class HoleManager extends Initable {
   }
 }
 
+const allowAnonymous = process.env.HOLE_ALLOW_ANONYMOUS === 'true'
+
 function getToken(access: boolean, token?: string) {
-  if (access) token ??= process.env.HOLE_TOKEN
+  if (access || allowAnonymous) token ??= process.env.HOLE_TOKEN
   if (!token) throw new Error('Token is required')
   return token
 }
@@ -159,16 +161,31 @@ const holeRouter = rootChain
         )
         try {
           const comments = resp.data
-          const _id = pid
-          await hole.collection.updateOne(
-            { _id },
-            { $set: { comments } },
-            { upsert: true }
-          )
+          if((comments instanceof Array) && comments.length){
+            const _id = pid
+            await hole.collection.updateOne(
+              { _id },
+              { $set: { comments } },
+              { upsert: true }
+            )
+          }
         } catch (err) {
           app.logger.error(err)
         }
         return resp
+      })
+  )
+  .handle('GET', '/recover', (C) =>
+    C.handler()
+      .query(
+        Type.Object({
+          pid: Type.Integer()
+        })
+      )
+      .handle(async ({ dbconn: { hole } }, req) => {
+        const { pid } = req.query
+        const item = await hole.collection.findOne({ _id: pid })
+        return item
       })
   )
 
