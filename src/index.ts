@@ -6,7 +6,8 @@ import {
   getHole,
   getHoleList,
   IComment,
-  IHole
+  IHole,
+  searchHole
 } from './pkuhole.js'
 import { IncomingHttpHeaders } from 'http'
 import type { GetRouterDescriptor } from 'fastify-typeful'
@@ -28,7 +29,7 @@ class HoleManager extends Initable {
 const allowAnonymous = process.env.HOLE_ALLOW_ANONYMOUS === 'true'
 
 function getToken(access: boolean, token?: string) {
-  if (access || allowAnonymous) token ??= process.env.HOLE_TOKEN
+  if (access || allowAnonymous) token ||= process.env.HOLE_TOKEN
   if (!token) throw new Error('Token is required')
   return token
 }
@@ -114,6 +115,49 @@ const holeRouter = rootChain
         return resp
       })
   )
+  .handle('GET', '/search', (C) =>
+    C.handler()
+      .query(
+        Type.Object({
+          token: Type.Optional(Type.String()),
+          page: Type.Optional(Type.Integer({ minimum: 1 })),
+          pagesize: Type.Optional(Type.Integer({ minimum: 1 })),
+          keywords: Type.String()
+        })
+      )
+      .handle(async ({ dbconn: { hole }, holeAccess, app }, req) => {
+        const { page = 1, pagesize = 50, keywords } = req.query
+        const resp = await searchHole(
+          getToken(holeAccess, req.query.token),
+          page,
+          pagesize,
+          keywords,
+          { headers: transformHeaders(req.headers) }
+        )
+        try {
+          const newHoles = resp.data.map((hole) => ({
+            _id: safeParse(hole.pid),
+            data: hole
+          }))
+          if (newHoles instanceof Array) {
+            const result = await hole.collection.bulkWrite(
+              newHoles.map(({ _id, data }) => ({
+                updateOne: {
+                  filter: { _id },
+                  update: { $set: { data } },
+                  upsert: true
+                }
+              })),
+              { ordered: false }
+            )
+            app.logger.info(`Archiver +${result.insertedCount}`)
+          }
+        } catch (err) {
+          app.logger.error(err)
+        }
+        return resp
+      })
+  )
   .handle('GET', '/getone', (C) =>
     C.handler()
       .query(
@@ -161,7 +205,7 @@ const holeRouter = rootChain
         )
         try {
           const comments = resp.data
-          if((comments instanceof Array) && comments.length){
+          if (comments instanceof Array && comments.length) {
             const _id = pid
             await hole.collection.updateOne(
               { _id },

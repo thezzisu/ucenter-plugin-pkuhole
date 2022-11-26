@@ -19,6 +19,11 @@ export interface IHoleListResp {
   count: number
 }
 
+export interface ISearchResp {
+  code: number
+  data: IHole[]
+}
+
 export interface IHoleResp {
   code: number
   data: IHole
@@ -54,6 +59,26 @@ export async function getHoleList(
 ) {
   const resp = await fetch(resolveHoleUrl('getlist', token, `&p=${page}`), init)
   return resp.json() as Promise<IHoleListResp>
+}
+
+export async function searchHole(
+  token: string,
+  page: number,
+  pagesize: number,
+  keywords: string,
+  init: RequestInit
+) {
+  const resp = await fetch(
+    resolveHoleUrl(
+      'search',
+      token,
+      `&pagesize=${pagesize}&page=${page}&keywords=${encodeURIComponent(
+        keywords
+      )}`
+    ),
+    init
+  )
+  return resp.json() as Promise<ISearchResp>
 }
 
 export async function getHole(token: string, pid: number, init: RequestInit) {

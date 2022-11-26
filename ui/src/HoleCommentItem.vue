@@ -13,22 +13,28 @@
         </NTag>
       </NSpace>
     </template>
-    <article class="p-2" v-html="props.comment.text"></article>
+    <article
+      class="p-2 whitespace-pre-wrap max-h-128 overflow-auto"
+      v-html="props.comment.text"
+    ></article>
     <template #footer>
-      <code>
-        {{ formatTs(props.comment.timestamp) }}
-        {{ props.comment.tag }}
-        {{ props.comment.islz ? 'lz' : '' }}
-      </code>
+      <NSpace>
+        <NTag>
+          {{ formatTs(props.comment.timestamp) }}
+          <template #icon>
+            <component :is="renderIcon(mdiClock)" />
+          </template>
+        </NTag>
+      </NSpace>
     </template>
   </NCard>
 </template>
 
 <script setup lang="ts">
-import { NCard, NTag, NIcon, NSpace } from 'naive-ui'
+import { NCard, NTag, NSpace } from 'naive-ui'
 import { renderIcon } from '@ucenter/ui/src/utils'
-import { mdiAccount } from '@mdi/js'
-import type { IComment } from '../..'
+import { mdiAccount, mdiClock } from '@mdi/js'
+import type { IComment } from '../../lib'
 import { formatTs } from './utils'
 
 const props = defineProps<{
