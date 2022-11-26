@@ -8,7 +8,11 @@
         :up="holes[i - 1].pid"
         :down="hole.pid"
       />
-      <HoleItem :hole="hole" embed />
+      <HoleItem
+        v-if="!props.detectDeletion || !deletionOnly"
+        :hole="hole"
+        embed
+      />
     </template>
     <div class="flex justify-center" ref="loader">
       <NButton :loading="loading" @click="loadPage">
@@ -26,6 +30,7 @@ import type { IHole } from '../../lib'
 import HoleItem from './HoleItem.vue'
 import DeletionDetector from './DeletionDetector.vue'
 import { formatErr } from './api'
+import { deletionOnly } from './utils'
 
 const props = defineProps<{
   loader: (page: number) => Promise<IHole[]>

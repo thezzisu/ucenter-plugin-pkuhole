@@ -64,7 +64,8 @@ export default definePlugin({
       'source-code': 'Source Code',
       reverse: 'Reverse',
       'hole-deleted': 'Hole deleted',
-      'hole-welcome': 'Welcome to PKUHole!'
+      'hole-welcome': 'Welcome to PKUHole!',
+      'deletion-only': 'Only show deleted holes'
     },
     zh: {
       hole: '树洞',
@@ -87,7 +88,8 @@ export default definePlugin({
       'source-code': '源代码',
       reverse: '倒序',
       'hole-deleted': '树洞已被删除',
-      'hole-welcome': '欢迎来到北大树洞'
+      'hole-welcome': '欢迎来到北大树洞',
+      'deletion-only': '只看被和谐的洞'
     }
   },
   policies: ['center:hole']

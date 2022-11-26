@@ -74,9 +74,15 @@
           :placeholder="$t('hole-token')"
         />
       </div>
-      <div class="flex justify-between items-center py-4">
+      <div class="grid grid-cols-2 gap-4 pt-4">
         <div>{{ $t('anonymous-mode') }}</div>
-        <n-switch v-model:value="anonymousMode" />
+        <div class="flex justify-end">
+          <NSwitch v-model:value="anonymousMode" />
+        </div>
+        <div>{{ $t('deletion-only') }}</div>
+        <div class="flex justify-end">
+          <NSwitch v-model:value="deletionOnly" />
+        </div>
       </div>
     </NCard>
   </NModal>
@@ -113,6 +119,7 @@ import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
 import { useI18n } from 'vue-i18n'
 import { anonymousMode, holeToken } from './api'
 import HoleHelp from './HoleHelp.vue'
+import { deletionOnly } from './utils'
 
 const breakpoints = useBreakpoints(breakpointsTailwind)
 const greaterOrEqualLg = breakpoints.greaterOrEqual('lg')
