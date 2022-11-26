@@ -1,5 +1,5 @@
 <template>
-  <NCard>
+  <NCard class="shadow">
     <template #header>
       <code>{{ comment.cid }}</code>
     </template>

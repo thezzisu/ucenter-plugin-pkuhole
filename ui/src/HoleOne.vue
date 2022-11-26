@@ -1,7 +1,6 @@
 <template>
   <div class="w-full grid grid-cols-1 gap-4 p-16">
     <HoleItem v-if="hole" :hole="hole" />
-    <HoleComments :pid="props.pid" />
   </div>
 </template>
 
@@ -12,7 +11,6 @@ import { useI18n } from 'vue-i18n'
 import { client } from './api'
 import type { IHole } from '../..'
 import HoleItem from './HoleItem.vue'
-import HoleComments from './HoleComments.vue'
 
 const props = defineProps<{
   pid: string
@@ -23,7 +21,7 @@ const loadingBar = useLoadingBar()
 const notification = useNotification()
 const hole = ref<IHole>()
 
-async function loadHole() {
+async function load() {
   loadingBar.start()
   try {
     const pid = +props.pid
@@ -39,5 +37,5 @@ async function loadHole() {
   }
 }
 
-loadHole()
+load()
 </script>

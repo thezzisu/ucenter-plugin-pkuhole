@@ -1,9 +1,11 @@
 <template>
   <div class="grid grid-cols-1 gap-2 p-16 <lg:p-2">
     <NBackTop />
-    <HoleItem v-for="hole in holes" :key="hole.pid" :hole="hole" />
+    <HoleItem v-for="hole in holes" :key="hole.pid" :hole="hole" embed />
     <div class="flex justify-center" ref="loader">
-      <NButton :loading="loading" @click="loadPage">Load More</NButton>
+      <NButton :loading="loading" @click="loadPage">
+        {{ $t('load-more') }}
+      </NButton>
     </div>
   </div>
 </template>

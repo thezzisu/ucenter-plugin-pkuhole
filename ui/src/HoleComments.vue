@@ -1,14 +1,24 @@
 <template>
-  <CommentItem
-    v-for="comment in comments"
-    :key="comment.cid"
-    :comment="comment"
-  />
+  <template v-if="loading">
+    <NSpace vertical>
+      <NSkeleton height="40px" width="33%" />
+      <NSkeleton text :repeat="3" />
+      <NSkeleton height="40px" />
+    </NSpace>
+  </template>
+  <template v-else>
+    <CommentItem
+      v-for="comment in comments"
+      :key="comment.cid"
+      :comment="comment"
+    />
+    <NCard :title="$t('no-comment')" v-if="!comments.length" />
+  </template>
 </template>
 
 <script setup lang="ts">
-import { h, ref } from 'vue'
-import { useLoadingBar, useNotification } from 'naive-ui'
+import { ref } from 'vue'
+import { useNotification, NSpace, NSkeleton, NCard } from 'naive-ui'
 import { useI18n } from 'vue-i18n'
 import { client } from './api'
 import type { IComment } from '../..'
@@ -22,8 +32,11 @@ const props = defineProps<{
 }>()
 
 const comments = ref<IComment[]>([])
+const loading = ref(false)
 
-async function loadComments() {
+async function load() {
+  if (loading.value) return
+  loading.value = true
   try {
     const pid = +props.pid
     const resp = await client.getcomment.$get.query({ pid }).fetch()
@@ -34,7 +47,12 @@ async function loadComments() {
       description: `${err}`
     })
   }
+  loading.value = false
 }
 
-loadComments()
+load()
+
+defineExpose({
+  load
+})
 </script>

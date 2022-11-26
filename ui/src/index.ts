@@ -27,10 +27,18 @@ export default definePlugin({
   },
   locales: {
     en: {
-      hole: 'Hole'
+      hole: 'Hole',
+      'view-in-pkuhelper': 'View in PKUHelper',
+      reload: 'Reload',
+      'load-more': 'Load More',
+      'no-comment': 'No comment yet...'
     },
     zh: {
-      hole: '树洞'
+      hole: '树洞',
+      'view-in-pkuhelper': '官方版本',
+      reload: '刷新',
+      'load-more': '加载更多',
+      'no-comment': '暂无评论...'
     }
   },
   policies: ['center:hole']
