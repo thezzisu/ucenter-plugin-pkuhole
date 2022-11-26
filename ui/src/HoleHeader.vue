@@ -1,6 +1,10 @@
 <template>
-  <NCard :bordered="false">
-    <template #header> Welcome to PKUHole! </template>
+  <NCard :bordered="false" class="sticky top-0 z-1">
+    <template #header>
+      <RouterLink to="/hole">
+        {{ $t('hole-welcome') }}
+      </RouterLink>
+    </template>
     <template #header-extra>
       <NSpace>
         <NButton @click="searchModal = true">
@@ -121,27 +125,32 @@ const searchModal = ref(false)
 const searchValue = ref('')
 function doSearch(e: KeyboardEvent | MouseEvent) {
   if (e instanceof KeyboardEvent && e.key !== 'Enter') return
-  if (Number.isSafeInteger(+searchValue.value)) {
+  const search = searchValue.value.trim()
+  const maybePid = search.startsWith('#') ? search.slice(1) : search
+  if (Number.isSafeInteger(+maybePid)) {
     dialog.info({
       title: t('tips'),
       content: t('search-pid-tips'),
       positiveText: t('goto-hole'),
       negativeText: t('do-search'),
       onPositiveClick: () => {
-        router.push({ path: `/hole/${searchValue.value}` })
+        router.push({ path: `/hole/${maybePid}` })
+        searchModal.value = false
       },
       onNegativeClick: () => {
         router.push({
           path: '/hole/search',
-          query: { keywords: searchValue.value }
+          query: { keywords: search }
         })
+        searchModal.value = false
       }
     })
   } else {
     router.push({
       path: '/hole/search',
-      query: { keywords: searchValue.value }
+      query: { keywords: search }
     })
+    searchModal.value = false
   }
 }
 

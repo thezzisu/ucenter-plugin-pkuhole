@@ -8,21 +8,27 @@ export default definePlugin({
   routes: [
     {
       path: '/hole',
-      component: () => import('./HoleHome.vue')
-    },
-    {
-      path: '/hole/search',
-      component: () => import('./HoleSearch.vue')
-    },
-    {
-      path: '/hole/recover/:pid',
-      component: () => import('./HoleRecover.vue'),
-      props: true
-    },
-    {
-      path: '/hole/:pid',
-      component: () => import('./HoleOne.vue'),
-      props: true
+      component: () => import('./HoleLayout.vue'),
+      children: [
+        {
+          path: '',
+          component: () => import('./HoleHome.vue')
+        },
+        {
+          path: 'search',
+          component: () => import('./HoleSearch.vue')
+        },
+        {
+          path: 'recover/:pid',
+          component: () => import('./HoleRecover.vue'),
+          props: true
+        },
+        {
+          path: ':pid',
+          component: () => import('./HoleOne.vue'),
+          props: true
+        }
+      ]
     }
   ],
   mainMenu: () => {
@@ -55,7 +61,10 @@ export default definePlugin({
       'goto-hole': 'Yes',
       'do-search': 'No',
       help: 'Help',
-      'source-code': 'Source Code'
+      'source-code': 'Source Code',
+      reverse: 'Reverse',
+      'hole-deleted': 'Hole deleted',
+      'hole-welcome': 'Welcome to PKUHole!'
     },
     zh: {
       hole: '树洞',
@@ -75,7 +84,10 @@ export default definePlugin({
       'goto-hole': '前去吃瓜',
       'do-search': '我要搜索',
       help: '帮助',
-      'source-code': '源代码'
+      'source-code': '源代码',
+      reverse: '倒序',
+      'hole-deleted': '树洞已被删除',
+      'hole-welcome': '欢迎来到北大树洞'
     }
   },
   policies: ['center:hole']

@@ -25,6 +25,7 @@ import { useI18n } from 'vue-i18n'
 import type { IHole } from '../../lib'
 import HoleItem from './HoleItem.vue'
 import DeletionDetector from './DeletionDetector.vue'
+import { formatErr } from './api'
 
 const props = defineProps<{
   loader: (page: number) => Promise<IHole[]>
@@ -61,7 +62,8 @@ async function loadPage() {
   } catch (err) {
     notification.error({
       title: t('error'),
-      description: `${err}`
+      description: await formatErr(err),
+      duration: 2000
     })
     loadingBar.error()
   }

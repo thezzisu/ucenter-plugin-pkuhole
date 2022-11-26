@@ -20,9 +20,15 @@
         </NButton>
         <NButton @click="doCopy">
           <template #icon>
-            <component :is="renderIcon(mdiClipboard)" />
+            <component :is="renderIcon(mdiClipboardOutline)" />
           </template>
           {{ $t('copy-hole-id') }}
+        </NButton>
+        <NButton @click="comments?.reverse()">
+          <template #icon>
+            <component :is="renderIcon(mdiSwapVertical)" />
+          </template>
+          {{ $t('reverse') }}
         </NButton>
       </NSpace>
     </template>
@@ -44,7 +50,12 @@
 <script setup lang="ts">
 import { NButton, NSpace, NScrollbar, useNotification } from 'naive-ui'
 import { renderIcon } from '@ucenter/ui/src/utils'
-import { mdiOpenInNew, mdiRefresh, mdiClipboard } from '@mdi/js'
+import {
+  mdiOpenInNew,
+  mdiRefresh,
+  mdiClipboardOutline,
+  mdiSwapVertical
+} from '@mdi/js'
 import { useClipboard, useIntersectionObserver } from '@vueuse/core'
 import type { IHole } from '../..'
 import HoleCommentsLoader from './HoleCommentsLoader.vue'
@@ -60,10 +71,10 @@ const clipboard = useClipboard()
 const notification = useNotification()
 
 function doCopy() {
-  clipboard.copy(props.hole.pid)
+  clipboard.copy('#' + props.hole.pid)
   notification.success({
     title: 'OK',
-    description: `Hole ID: ${props.hole.pid}`,
+    description: `Hole ID: #${props.hole.pid}`,
     duration: 2000
   })
 }

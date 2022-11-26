@@ -1,6 +1,6 @@
 <template>
   <template v-if="delta">
-    <NAlert :title="`${delta} hole deleted`" type="error">
+    <NAlert :title="`${delta} ${$t('hole-deleted')}`" type="error">
       <template #icon>
         <component :is="renderIcon(mdiInformation)" />
       </template>

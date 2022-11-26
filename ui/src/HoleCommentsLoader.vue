@@ -13,7 +13,7 @@
 import { ref } from 'vue'
 import { useNotification, NSpace, NSkeleton, NCard } from 'naive-ui'
 import { useI18n } from 'vue-i18n'
-import { client, token } from './api'
+import { client, formatErr, token } from './api'
 import type { IComment } from '../../lib'
 import HoleComments from './HoleComments.vue'
 
@@ -35,11 +35,12 @@ async function load() {
     const resp = await client.getcomment.$get
       .query({ pid, token: token.value })
       .fetch()
-    comments.value = resp.data
+    comments.value = resp.data.sort((a, b) => +a.cid - +b.cid)
   } catch (err) {
     notification.error({
       title: t('error'),
-      description: `${err}`
+      description: await formatErr(err),
+      duration: 2000
     })
   }
   loading.value = false
@@ -47,7 +48,12 @@ async function load() {
 
 load()
 
+function reverse() {
+  comments.value.reverse()
+}
+
 defineExpose({
-  load
+  load,
+  reverse
 })
 </script>

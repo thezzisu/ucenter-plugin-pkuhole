@@ -1,9 +1,24 @@
 <template>
-  <div class="w-full grid grid-cols-1 gap-4 p-16 <lg:p-2">
+  <div class="w-full grid grid-cols-1 gap-4 p-16 pt-2 <lg:p-2">
     <NAlert type="info">{{ $t('recover-alert') }}</NAlert>
     <template v-if="result">
       <HoleItemMain :hole="result.data ?? {}">
-        <!-- Actions -->
+        <template #action>
+          <NSpace>
+            <NButton @click="doCopy">
+              <template #icon>
+                <component :is="renderIcon(mdiClipboardOutline)" />
+              </template>
+              {{ $t('copy-hole-id') }}
+            </NButton>
+            <NButton @click=";(result?.comments ?? []).reverse()">
+              <template #icon>
+                <component :is="renderIcon(mdiSwapVertical)" />
+              </template>
+              {{ $t('reverse') }}
+            </NButton>
+          </NSpace>
+        </template>
       </HoleItemMain>
       <HoleComments :comments="result.comments ?? []" />
     </template>
@@ -12,9 +27,18 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useLoadingBar, useNotification, NAlert } from 'naive-ui'
+import {
+  useLoadingBar,
+  useNotification,
+  NAlert,
+  NSpace,
+  NButton
+} from 'naive-ui'
 import { useI18n } from 'vue-i18n'
-import { client } from './api'
+import { useClipboard } from '@vueuse/core'
+import { renderIcon } from '@ucenter/ui/src/utils'
+import { mdiClipboardOutline, mdiSwapVertical } from '@mdi/js'
+import { client, formatErr } from './api'
 import HoleItemMain from './HoleItemMain.vue'
 import HoleComments from './HoleComments.vue'
 
@@ -24,7 +48,17 @@ const props = defineProps<{
 
 const { t } = useI18n()
 const loadingBar = useLoadingBar()
+const clipboard = useClipboard()
 const notification = useNotification()
+
+function doCopy() {
+  clipboard.copy('#' + props.pid)
+  notification.success({
+    title: 'OK',
+    description: `Hole ID: #${props.pid}`,
+    duration: 2000
+  })
+}
 
 type RecoverResult = NonNullable<
   Awaited<ReturnType<typeof client['recover']['$get']['fetch']>>
@@ -43,7 +77,8 @@ async function load() {
   } catch (err) {
     notification.error({
       title: t('error'),
-      description: `${err}`
+      description: await formatErr(err),
+      duration: 2000
     })
     loadingBar.error()
   }
