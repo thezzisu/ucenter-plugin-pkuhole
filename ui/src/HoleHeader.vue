@@ -7,13 +7,25 @@
           <template #icon>
             <component :is="renderIcon(mdiMagnify)" />
           </template>
-          {{ $t('search') }}
+          <template v-if="greaterOrEqualLg">
+            {{ $t('search') }}
+          </template>
         </NButton>
         <NButton @click="settingsModal = true">
           <template #icon>
             <component :is="renderIcon(mdiCog)" />
           </template>
-          {{ $t('settings') }}
+          <template v-if="greaterOrEqualLg">
+            {{ $t('settings') }}
+          </template>
+        </NButton>
+        <NButton @click="helpModal = true">
+          <template #icon>
+            <component :is="renderIcon(mdiHelp)" />
+          </template>
+          <template v-if="greaterOrEqualLg">
+            {{ $t('help') }}
+          </template>
         </NButton>
       </NSpace>
     </template>
@@ -64,6 +76,18 @@
       </div>
     </NCard>
   </NModal>
+  <NModal v-model:show="helpModal">
+    <NCard
+      style="width: 600px"
+      :title="$t('help')"
+      :bordered="false"
+      size="huge"
+      role="dialog"
+      aria-modal="true"
+    >
+      <HoleHelp />
+    </NCard>
+  </NModal>
 </template>
 
 <script setup lang="ts">
@@ -78,11 +102,16 @@ import {
   useDialog
 } from 'naive-ui'
 import { renderIcon } from '@ucenter/ui/src/utils'
-import { mdiMagnify, mdiCog } from '@mdi/js'
+import { mdiMagnify, mdiCog, mdiHelp } from '@mdi/js'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { anonymousMode, holeToken } from './api'
+import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
 import { useI18n } from 'vue-i18n'
+import { anonymousMode, holeToken } from './api'
+import HoleHelp from './HoleHelp.vue'
+
+const breakpoints = useBreakpoints(breakpointsTailwind)
+const greaterOrEqualLg = breakpoints.greaterOrEqual('lg')
 
 const router = useRouter()
 const dialog = useDialog()
@@ -117,4 +146,6 @@ function doSearch(e: KeyboardEvent | MouseEvent) {
 }
 
 const settingsModal = ref(false)
+
+const helpModal = ref(false)
 </script>

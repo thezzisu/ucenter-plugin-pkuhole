@@ -39,6 +39,7 @@ export default definePlugin({
       hole: 'Hole',
       'view-in-pkuhelper': 'View in PKUHelper',
       reload: 'Reload',
+      'copy-hole-id': 'Copy Hole ID',
       'load-more': 'Load More',
       'no-comment': 'No comment yet...',
       'recover-alert':
@@ -52,12 +53,15 @@ export default definePlugin({
       'search-pid-tips':
         'It seems that you have entered a hole ID, do you want to go to that hole?',
       'goto-hole': 'Yes',
-      'do-search': 'No'
+      'do-search': 'No',
+      help: 'Help',
+      'source-code': 'Source Code'
     },
     zh: {
       hole: '树洞',
       'view-in-pkuhelper': '官方版本',
       reload: '刷新',
+      'copy-hole-id': '复制树洞ID',
       'load-more': '加载更多',
       'no-comment': '暂无评论...',
       'recover-alert': '您正在查看的树洞已被存档，可能不是最新版本。',
@@ -69,7 +73,9 @@ export default definePlugin({
       tips: '提示',
       'search-pid-tips': '你输入了一个可能的树洞ID，是否跳转到该树洞？',
       'goto-hole': '前去吃瓜',
-      'do-search': '我要搜索'
+      'do-search': '我要搜索',
+      help: '帮助',
+      'source-code': '源代码'
     }
   },
   policies: ['center:hole']

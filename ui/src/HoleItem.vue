@@ -18,6 +18,12 @@
           </template>
           {{ $t('reload') }}
         </NButton>
+        <NButton @click="doCopy">
+          <template #icon>
+            <component :is="renderIcon(mdiClipboard)" />
+          </template>
+          {{ $t('copy-hole-id') }}
+        </NButton>
       </NSpace>
     </template>
   </HoleItemMain>
@@ -36,10 +42,10 @@
 </template>
 
 <script setup lang="ts">
-import { NCard, NImage, NTag, NButton, NSpace, NScrollbar } from 'naive-ui'
+import { NButton, NSpace, NScrollbar, useNotification } from 'naive-ui'
 import { renderIcon } from '@ucenter/ui/src/utils'
-import { mdiOpenInNew, mdiRefresh } from '@mdi/js'
-import { useIntersectionObserver } from '@vueuse/core'
+import { mdiOpenInNew, mdiRefresh, mdiClipboard } from '@mdi/js'
+import { useClipboard, useIntersectionObserver } from '@vueuse/core'
 import type { IHole } from '../..'
 import HoleCommentsLoader from './HoleCommentsLoader.vue'
 import { onUnmounted, ref } from 'vue'
@@ -49,6 +55,18 @@ const props = defineProps<{
   hole: IHole
   embed?: boolean
 }>()
+
+const clipboard = useClipboard()
+const notification = useNotification()
+
+function doCopy() {
+  clipboard.copy(props.hole.pid)
+  notification.success({
+    title: 'OK',
+    description: `Hole ID: ${props.hole.pid}`,
+    duration: 2000
+  })
+}
 
 const target = ref(null)
 const comments = ref<InstanceType<typeof HoleCommentsLoader> | null>(null)
