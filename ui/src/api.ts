@@ -1,6 +1,5 @@
-import { createClient, HandlerFetchError } from 'typeful-fetch'
-import { authToken } from '@ucenter/ui/src/api'
-import { resolveUrl } from '@ucenter/ui/src/config'
+import { HandlerFetchError } from 'typeful-fetch'
+import { createResolvedClient } from '@ucenter/ui/src/utils'
 import { useLocalStorage } from '@vueuse/core'
 import type { HoleDescriptor } from '../..'
 import { computed } from 'vue'
@@ -13,13 +12,7 @@ export const options = computed(() => ({
   proxy: holeProxy.value
 }))
 
-export const client = createClient<HoleDescriptor>(resolveUrl('/hole'), () => {
-  return {
-    headers: {
-      'x-auth-token': authToken.value
-    }
-  }
-})
+export const client = createResolvedClient<HoleDescriptor>('/hole')
 
 export async function formatErr(err: unknown) {
   try {

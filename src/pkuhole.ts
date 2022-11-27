@@ -128,3 +128,42 @@ export async function getCommentList(
     init
   )
 }
+
+export interface IDoCommentResp {
+  code: number
+  data: number
+}
+
+export async function doComment(
+  token: string,
+  pid: number,
+  text: string,
+  init: RequestInit
+) {
+  return fetchApi<IDoCommentResp>(resolveHoleUrl('docomment', token, ''), {
+    method: 'POST',
+    body: `pid=${pid}&text=${encodeURIComponent(text)}&user_token=${token}`,
+    ...init,
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      ...init.headers
+    }
+  })
+}
+
+export interface IDoPostResp {
+  code: number
+  data: string
+}
+
+export async function doPost(token: string, text: string, init: RequestInit) {
+  return fetchApi<IDoPostResp>(resolveHoleUrl('dopost', token, ''), {
+    method: 'POST',
+    body: `text=${encodeURIComponent(text)}&type=text&user_token=${token}`,
+    ...init,
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      ...init.headers
+    }
+  })
+}

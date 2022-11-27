@@ -2,6 +2,8 @@ import { DbConn, Plugin, Initable, rootChain } from '@ucenter/server'
 import http from 'http-errors'
 import { Type, Static } from '@sinclair/typebox'
 import {
+  doComment,
+  doPost,
   getCommentList,
   getHole,
   getHoleList,
@@ -246,6 +248,42 @@ const holeRouter = rootChain
           app.logger.error(err)
         }
         return resp
+      })
+  )
+  .handle('POST', '/comment', (C) =>
+    C.handler()
+      .query(baseOptions)
+      .body(
+        Type.Object({
+          pid: Type.Integer(),
+          text: Type.String()
+        })
+      )
+      .handle(async (_, req) => {
+        if (!req.query.token) throw http.BadRequest()
+        return doComment(
+          req.query.token,
+          req.body.pid,
+          req.body.text,
+          getRequestInit(req.query, req.headers)
+        )
+      })
+  )
+  .handle('POST', '/post', (C) =>
+    C.handler()
+      .query(baseOptions)
+      .body(
+        Type.Object({
+          text: Type.String()
+        })
+      )
+      .handle(async (_, req) => {
+        if (!req.query.token) throw http.BadRequest()
+        return doPost(
+          req.query.token,
+          req.body.text,
+          getRequestInit(req.query, req.headers)
+        )
       })
   )
   .handle('GET', '/recover', (C) =>
