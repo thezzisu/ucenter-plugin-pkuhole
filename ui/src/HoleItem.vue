@@ -2,34 +2,31 @@
   <HoleItemMain :hole="props.hole" ref="target">
     <template #action>
       <NSpace>
-        <NButton
-          tag="a"
-          :href="`https://pkuhelper.pku.edu.cn/hole/##${hole.pid}`"
-          target="_blank"
-        >
-          <template #icon>
-            <component :is="renderIcon(mdiOpenInNew)" />
-          </template>
-          {{ $t('view-in-pkuhelper') }}
-        </NButton>
-        <NButton @click="comments?.load()">
-          <template #icon>
-            <component :is="renderIcon(mdiRefresh)" />
-          </template>
-          {{ $t('reload') }}
-        </NButton>
-        <NButton @click="doCopy">
-          <template #icon>
-            <component :is="renderIcon(mdiClipboardOutline)" />
-          </template>
-          {{ $t('copy-hole-id') }}
-        </NButton>
-        <NButton @click="comments?.reverse()">
-          <template #icon>
-            <component :is="renderIcon(mdiSwapVertical)" />
-          </template>
-          {{ $t('reverse') }}
-        </NButton>
+        <AutoBtn
+          i18n-key="view-in-pkuhelper"
+          :icon="mdiOpenInNew"
+          :btn-props="{
+            tag: 'a',
+            href: `https://pkuhelper.pku.edu.cn/hole/##${hole.pid}`,
+            target: '_blank'
+          }"
+        />
+        <AutoBtn
+          i18n-key="reload"
+          :icon="mdiRefresh"
+          @click="comments?.load()"
+        />
+        <AutoBtn
+          i18n-key="copy-hole-id"
+          :icon="mdiClipboardOutline"
+          @click="doCopy"
+        />
+        <AutoBtn
+          i18n-key="reverse"
+          :icon="mdiSwapVertical"
+          @click="comments?.reverse()"
+        />
+        <HoleReplyBtn :pid="+hole.pid" @reply="comments?.load()" />
       </NSpace>
     </template>
   </HoleItemMain>
@@ -48,8 +45,7 @@
 </template>
 
 <script setup lang="ts">
-import { NButton, NSpace, NScrollbar, useNotification } from 'naive-ui'
-import { renderIcon } from '@ucenter/ui/src/utils'
+import { NSpace, NScrollbar, useNotification } from 'naive-ui'
 import {
   mdiOpenInNew,
   mdiRefresh,
@@ -62,6 +58,8 @@ import HoleCommentsLoader from './HoleCommentsLoader.vue'
 import { onUnmounted, ref } from 'vue'
 import HoleItemMain from './HoleItemMain.vue'
 import { useI18n } from 'vue-i18n'
+import HoleReplyBtn from './HoleReplyBtn.vue'
+import AutoBtn from './AutoBtn.vue'
 
 const props = defineProps<{
   hole: IHole

@@ -11,6 +11,9 @@ export const options = computed(() => ({
   token: anonymousMode.value ? undefined : holeToken.value,
   proxy: holeProxy.value
 }))
+export const holeLoggedIn = computed(
+  () => holeToken.value && !anonymousMode.value
+)
 
 export const client = createResolvedClient<HoleDescriptor>('/hole')
 

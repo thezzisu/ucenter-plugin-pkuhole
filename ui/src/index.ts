@@ -69,7 +69,10 @@ export default definePlugin({
       'deletion-only': 'Only show deleted holes',
       'failed-to-recover': 'Failed to recover',
       error: 'Error',
-      success: 'Success'
+      success: 'Success',
+      'post-hole': 'Post Hole',
+      'hole-text-placeholder': 'Some content...',
+      'send-reply': 'Send Reply'
     },
     zh: {
       hole: '树洞',
@@ -97,7 +100,10 @@ export default definePlugin({
       'deletion-only': '只看被和谐的洞',
       'failed-to-recover': '恢复失败',
       error: '发生错误',
-      success: '操作成功'
+      success: '操作成功',
+      'post-hole': '发洞',
+      'hole-text-placeholder': '说点什么吧...',
+      'send-reply': '发送回复'
     }
   },
   policies: ['center:hole']

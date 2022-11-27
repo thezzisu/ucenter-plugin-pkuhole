@@ -1,7 +1,12 @@
 <template>
-  <div class="grid grid-cols-1 gap-2 p-16 pt-2 <lg:p-2">
+  <div class="grid grid-cols-1 gap-2 px-16 pt-2">
     <NBackTop />
     <slot name="header"></slot>
+    <NSpace>
+      <NButton @click="reload" type="primary">
+        {{ $t('reload') }}
+      </NButton>
+    </NSpace>
     <template v-for="(hole, i) in holes" :key="hole.pid">
       <DeletionDetector
         v-if="props.detectDeletion && i"
@@ -24,7 +29,13 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import { useLoadingBar, useNotification, NBackTop, NButton } from 'naive-ui'
+import {
+  useLoadingBar,
+  useNotification,
+  NBackTop,
+  NButton,
+  NSpace
+} from 'naive-ui'
 import { useI18n } from 'vue-i18n'
 import type { IHole } from '../../lib'
 import HoleItem from './HoleItem.vue'
@@ -73,6 +84,12 @@ async function loadPage() {
     loadingBar.error()
   }
   loading.value = false
+}
+
+function reload() {
+  loadedPages.value = 0
+  holes.value = []
+  loadPage()
 }
 
 onMounted(() => {
