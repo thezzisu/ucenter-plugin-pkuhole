@@ -1,5 +1,5 @@
 <template>
-  <div class="grid grid-cols-1 gap-2 px-16 pt-2">
+  <div class="grid grid-cols-1 gap-2 px-16 pt-2 <lg:px-2">
     <NBackTop />
     <slot name="header"></slot>
     <NSpace>

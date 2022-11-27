@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full grid grid-cols-1 gap-4 p-16 pt-2 <lg:p-2">
+  <div class="w-full grid grid-cols-1 gap-4 px-16 pt-2 <lg:px-2">
     <HoleItem v-if="hole" :hole="hole" />
     <NAlert v-else-if="hole === null" :title="$t('hole-deleted')" type="error">
       <template #icon>
