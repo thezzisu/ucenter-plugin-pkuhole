@@ -66,7 +66,10 @@ export default definePlugin({
       reverse: 'Reverse',
       'hole-deleted': 'Hole deleted',
       'hole-welcome': 'Welcome to PKUHole!',
-      'deletion-only': 'Only show deleted holes'
+      'deletion-only': 'Only show deleted holes',
+      'failed-to-recover': 'Failed to recover',
+      error: 'Error',
+      success: 'Success'
     },
     zh: {
       hole: '树洞',
@@ -91,7 +94,10 @@ export default definePlugin({
       reverse: '倒序',
       'hole-deleted': '树洞已被删除',
       'hole-welcome': '欢迎来到北大树洞',
-      'deletion-only': '只看被和谐的洞'
+      'deletion-only': '只看被和谐的洞',
+      'failed-to-recover': '恢复失败',
+      error: '发生错误',
+      success: '操作成功'
     }
   },
   policies: ['center:hole']

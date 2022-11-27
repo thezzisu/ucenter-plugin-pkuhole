@@ -12,14 +12,24 @@
         </NButton>
       </NSpace>
     </NAlert>
+    <NScrollbar x-scrollable>
+      <div class="deletions-container">
+        <DeletionItemLoader
+          v-for="hole in deletedHoles"
+          :key="hole"
+          :pid="hole"
+        />
+      </div>
+    </NScrollbar>
   </template>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { NAlert, NSpace, NButton } from 'naive-ui'
+import { NAlert, NSpace, NButton, NScrollbar } from 'naive-ui'
 import { renderIcon } from '@ucenter/ui/src/utils'
 import { mdiInformation } from '@mdi/js'
+import DeletionItemLoader from './DeletionItemLoader.vue'
 
 const props = defineProps<{
   up: string
@@ -35,3 +45,12 @@ const deletedHoles = computed(() =>
     .map((_, i) => i + down.value + 1)
 )
 </script>
+
+<style>
+.deletions-container {
+  @apply grid gap-2 mb-2 p-2;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(320px, 1fr);
+}
+</style>

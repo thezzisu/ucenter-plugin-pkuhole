@@ -252,12 +252,16 @@ const holeRouter = rootChain
     C.handler()
       .query(
         Type.Object({
-          pid: Type.Integer()
+          pid: Type.Integer(),
+          noComments: Type.Optional(Type.Boolean())
         })
       )
       .handle(async ({ dbconn: { hole } }, req) => {
         const { pid } = req.query
-        const item = await hole.collection.findOne({ _id: pid })
+        const options = req.query.noComments
+          ? { projection: { comments: 0 } }
+          : {}
+        const item = await hole.collection.findOne({ _id: pid }, options)
         return item
       })
   )

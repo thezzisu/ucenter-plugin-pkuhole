@@ -54,8 +54,8 @@ const notification = useNotification()
 function doCopy() {
   clipboard.copy('#' + props.pid)
   notification.success({
-    title: 'OK',
-    description: `Hole ID: #${props.pid}`,
+    title: t('success'),
+    description: `ID: #${props.pid}`,
     duration: 2000
   })
 }
@@ -71,7 +71,7 @@ async function load() {
   try {
     const pid = +props.pid
     const resp = await client.recover.$get.query({ pid }).fetch()
-    if (!resp) throw new Error('Unable to recover')
+    if (!resp) throw new Error(t('failed-to-recover'))
     result.value = resp
     loadingBar.finish()
   } catch (err) {

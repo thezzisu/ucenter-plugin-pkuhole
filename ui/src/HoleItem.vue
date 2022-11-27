@@ -61,20 +61,22 @@ import type { IHole } from '../..'
 import HoleCommentsLoader from './HoleCommentsLoader.vue'
 import { onUnmounted, ref } from 'vue'
 import HoleItemMain from './HoleItemMain.vue'
+import { useI18n } from 'vue-i18n'
 
 const props = defineProps<{
   hole: IHole
   embed?: boolean
 }>()
 
+const { t } = useI18n()
 const clipboard = useClipboard()
 const notification = useNotification()
 
 function doCopy() {
   clipboard.copy('#' + props.hole.pid)
   notification.success({
-    title: 'OK',
-    description: `Hole ID: #${props.hole.pid}`,
+    title: t('success'),
+    description: `ID: #${props.hole.pid}`,
     duration: 2000
   })
 }
