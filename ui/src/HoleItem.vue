@@ -26,7 +26,11 @@
           :icon="mdiSwapVertical"
           @click="comments?.reverse()"
         />
-        <HoleReplyBtn :pid="+hole.pid" @reply="comments?.load()" />
+        <HoleReplyBtn
+          v-if="holeLoggedIn"
+          :pid="+hole.pid"
+          @reply="comments?.load()"
+        />
       </NSpace>
     </template>
   </HoleItemMain>
@@ -60,6 +64,7 @@ import HoleItemMain from './HoleItemMain.vue'
 import { useI18n } from 'vue-i18n'
 import HoleReplyBtn from './HoleReplyBtn.vue'
 import AutoBtn from './AutoBtn.vue'
+import { holeLoggedIn } from './api'
 
 const props = defineProps<{
   hole: IHole
