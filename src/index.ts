@@ -1,6 +1,6 @@
 import { DbConn, Plugin, Initable, rootChain } from '@ucenter/server'
 import http from 'http-errors'
-import { Type } from '@sinclair/typebox'
+import { Type, Static } from '@sinclair/typebox'
 import {
   getCommentList,
   getHole,
@@ -9,8 +9,10 @@ import {
   IHole,
   searchHole
 } from './pkuhole.js'
-import { IncomingHttpHeaders } from 'http'
+import { Agent, IncomingHttpHeaders } from 'http'
 import type { GetRouterDescriptor } from 'fastify-typeful'
+import { SocksProxyAgent } from 'socks-proxy-agent'
+import type { RequestInit, HeadersInit } from 'node-fetch'
 
 export interface IHoleDoc {
   _id: number
@@ -54,11 +56,30 @@ function transformHeaders(headers: IncomingHttpHeaders): HeadersInit {
   }
 }
 
+function getRequestInit(
+  options: Static<typeof baseOptions>,
+  headers: IncomingHttpHeaders
+): RequestInit {
+  let agent: Agent | undefined
+  if (options.proxy) {
+    agent = new SocksProxyAgent(options.proxy)
+  }
+  return {
+    headers: transformHeaders(headers),
+    agent
+  }
+}
+
 function safeParse(str: string) {
   const num = parseInt(str)
   if (Number.isSafeInteger(num)) return num
   return 0
 }
+
+const baseOptions = Type.Object({
+  token: Type.Optional(Type.String()),
+  proxy: Type.Optional(Type.String())
+})
 
 const holeRouter = rootChain
   .transform(async (ctx, req) => {
@@ -79,17 +100,19 @@ const holeRouter = rootChain
   .handle('GET', '/list', (C) =>
     C.handler()
       .query(
-        Type.Object({
-          token: Type.Optional(Type.String()),
-          page: Type.Optional(Type.Integer({ minimum: 1 }))
-        })
+        Type.Intersect([
+          baseOptions,
+          Type.Object({
+            page: Type.Optional(Type.Integer({ minimum: 1 }))
+          })
+        ])
       )
       .handle(async ({ dbconn: { hole }, holeAccess, app }, req) => {
         const { page = 1 } = req.query
         const resp = await getHoleList(
           getToken(holeAccess, req.query.token),
           page,
-          { headers: transformHeaders(req.headers) }
+          getRequestInit(req.query, req.headers)
         )
         try {
           const newHoles = resp.data.map((hole) => ({
@@ -118,12 +141,14 @@ const holeRouter = rootChain
   .handle('GET', '/search', (C) =>
     C.handler()
       .query(
-        Type.Object({
-          token: Type.Optional(Type.String()),
-          page: Type.Optional(Type.Integer({ minimum: 1 })),
-          pagesize: Type.Optional(Type.Integer({ minimum: 1 })),
-          keywords: Type.String()
-        })
+        Type.Intersect([
+          baseOptions,
+          Type.Object({
+            page: Type.Optional(Type.Integer({ minimum: 1 })),
+            pagesize: Type.Optional(Type.Integer({ minimum: 1 })),
+            keywords: Type.String()
+          })
+        ])
       )
       .handle(async ({ dbconn: { hole }, holeAccess, app }, req) => {
         const { page = 1, pagesize = 50, keywords } = req.query
@@ -132,7 +157,7 @@ const holeRouter = rootChain
           page,
           pagesize,
           keywords,
-          { headers: transformHeaders(req.headers) }
+          getRequestInit(req.query, req.headers)
         )
         try {
           const newHoles = resp.data.map((hole) => ({
@@ -161,16 +186,20 @@ const holeRouter = rootChain
   .handle('GET', '/getone', (C) =>
     C.handler()
       .query(
-        Type.Object({
-          token: Type.Optional(Type.String()),
-          pid: Type.Integer()
-        })
+        Type.Intersect([
+          baseOptions,
+          Type.Object({
+            pid: Type.Integer()
+          })
+        ])
       )
       .handle(async ({ dbconn: { hole }, holeAccess, app }, req) => {
         const { pid } = req.query
-        const resp = await getHole(getToken(holeAccess, req.query.token), pid, {
-          headers: transformHeaders(req.headers)
-        })
+        const resp = await getHole(
+          getToken(holeAccess, req.query.token),
+          pid,
+          getRequestInit(req.query, req.headers)
+        )
         try {
           const data = resp.data
           const _id = safeParse(data.pid)
@@ -189,19 +218,19 @@ const holeRouter = rootChain
   .handle('GET', '/getcomment', (C) =>
     C.handler()
       .query(
-        Type.Object({
-          token: Type.Optional(Type.String()),
-          pid: Type.Integer()
-        })
+        Type.Intersect([
+          baseOptions,
+          Type.Object({
+            pid: Type.Integer()
+          })
+        ])
       )
       .handle(async ({ dbconn: { hole }, holeAccess, app }, req) => {
         const { pid } = req.query
         const resp = await getCommentList(
           getToken(holeAccess, req.query.token),
           pid,
-          {
-            headers: transformHeaders(req.headers)
-          }
+          getRequestInit(req.query, req.headers)
         )
         try {
           const comments = resp.data

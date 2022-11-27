@@ -1,4 +1,5 @@
 import http from 'http-errors'
+import fetch, { type RequestInit } from 'node-fetch'
 
 export interface IHole {
   pid: string
@@ -54,9 +55,23 @@ export function resolveHoleUrl(action: string, token: string, q = '') {
   return `https://pkuhelper.pku.edu.cn/services/pkuhole/api.php?action=${action}${q}&PKUHelperAPI=3.0&jsapiver=201027113050-463690&user_token=${token}`
 }
 
-function handleError(resp: Response) {
-  if (resp.ok) return
-  throw http.BadGateway(`Upstream ${resp.status} error: ${resp.statusText}`)
+const timeout = parseInt(process.env.HOLE_API_TIMEOUT ?? '10000')
+
+async function fetchApi<T>(url: string, init: RequestInit) {
+  const controller = new AbortController()
+  const t = setTimeout(() => controller.abort(), timeout)
+  try {
+    const resp = await fetch(url, { signal: controller.signal, ...init })
+    if (!resp.ok) {
+      throw http.BadGateway(`Upstream ${resp.status} error: ${resp.statusText}`)
+    }
+    const data = <T>await resp.json()
+    clearTimeout(t)
+    return data
+  } catch (err) {
+    clearTimeout(t)
+    throw err
+  }
 }
 
 export async function getHoleList(
@@ -64,9 +79,10 @@ export async function getHoleList(
   page: number,
   init: RequestInit
 ) {
-  const resp = await fetch(resolveHoleUrl('getlist', token, `&p=${page}`), init)
-  handleError(resp)
-  return resp.json() as Promise<IHoleListResp>
+  return fetchApi<IHoleListResp>(
+    resolveHoleUrl('getlist', token, `&p=${page}`),
+    init
+  )
 }
 
 export async function searchHole(
@@ -76,7 +92,7 @@ export async function searchHole(
   keywords: string,
   init: RequestInit
 ) {
-  const resp = await fetch(
+  return fetchApi<ISearchResp>(
     resolveHoleUrl(
       'search',
       token,
@@ -86,14 +102,13 @@ export async function searchHole(
     ),
     init
   )
-  handleError(resp)
-  return resp.json() as Promise<ISearchResp>
 }
 
 export async function getHole(token: string, pid: number, init: RequestInit) {
-  const resp = await fetch(resolveHoleUrl('getone', token, `&pid=${pid}`), init)
-  handleError(resp)
-  return resp.json() as Promise<IHoleResp>
+  return fetchApi<IHoleResp>(
+    resolveHoleUrl('getone', token, `&pid=${pid}`),
+    init
+  )
 }
 
 export async function getCommentList(
@@ -101,10 +116,8 @@ export async function getCommentList(
   pid: number,
   init: RequestInit
 ) {
-  const resp = await fetch(
+  return fetchApi<ICommentListResp>(
     resolveHoleUrl('getcomment', token, `&pid=${pid}`),
     init
   )
-  handleError(resp)
-  return resp.json() as Promise<ICommentListResp>
 }

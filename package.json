@@ -18,5 +18,9 @@
   },
   "devDependencies": {
     "typescript": "^4.9.3"
+  },
+  "dependencies": {
+    "node-fetch": "^3.3.0",
+    "socks-proxy-agent": "^7.0.0"
   }
 }
