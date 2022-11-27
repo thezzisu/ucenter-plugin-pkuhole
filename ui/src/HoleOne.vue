@@ -20,7 +20,7 @@ import { useLoadingBar, useNotification, NAlert, NButton } from 'naive-ui'
 import { useI18n } from 'vue-i18n'
 import { renderIcon } from '@ucenter/ui/src/utils'
 import { mdiInformation } from '@mdi/js'
-import { client, formatErr, token } from './api'
+import { client, formatErr, options } from './api'
 import type { IHole } from '../..'
 import HoleItem from './HoleItem.vue'
 
@@ -38,7 +38,7 @@ async function load() {
   try {
     const pid = +props.pid
     const resp = await client.getone.$get
-      .query({ pid, token: token.value })
+      .query({ pid, ...options.value })
       .fetch()
     hole.value = resp.data ?? null
     loadingBar.finish()

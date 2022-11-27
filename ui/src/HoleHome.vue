@@ -4,12 +4,10 @@
 
 <script setup lang="ts">
 import HoleListView from './HoleListView.vue'
-import { client, token } from './api'
+import { client, options } from './api'
 
 async function loader(page: number) {
-  const resp = await client.list.$get
-    .query({ page, token: token.value })
-    .fetch()
+  const resp = await client.list.$get.query({ page, ...options.value }).fetch()
   return resp.data
 }
 </script>

@@ -11,9 +11,9 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useNotification, NSpace, NSkeleton, NCard } from 'naive-ui'
+import { useNotification, NSpace, NSkeleton } from 'naive-ui'
 import { useI18n } from 'vue-i18n'
-import { client, formatErr, token } from './api'
+import { client, formatErr, options } from './api'
 import type { IComment } from '../../lib'
 import HoleComments from './HoleComments.vue'
 
@@ -33,7 +33,7 @@ async function load() {
   try {
     const pid = +props.pid
     const resp = await client.getcomment.$get
-      .query({ pid, token: token.value })
+      .query({ pid, ...options.value })
       .fetch()
     comments.value = resp.data.sort((a, b) => +a.cid - +b.cid)
   } catch (err) {

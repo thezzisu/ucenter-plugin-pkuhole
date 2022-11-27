@@ -6,10 +6,12 @@ import type { HoleDescriptor } from '../..'
 import { computed } from 'vue'
 
 export const holeToken = useLocalStorage('hole-token', '')
+export const holeProxy = useLocalStorage('hole-proxy', '')
 export const anonymousMode = useLocalStorage('hole-anonymous', true)
-export const token = computed(() =>
-  anonymousMode.value ? undefined : holeToken.value
-)
+export const options = computed(() => ({
+  token: anonymousMode.value ? undefined : holeToken.value,
+  proxy: holeProxy.value
+}))
 
 export const client = createClient<HoleDescriptor>(resolveUrl('/hole'), () => {
   return {

@@ -67,23 +67,28 @@
       role="dialog"
       aria-modal="true"
     >
-      <div>
+      <NSpace vertical>
         <NInput
           v-model:value="holeToken"
           type="text"
           :placeholder="$t('hole-token')"
         />
-      </div>
-      <div class="grid grid-cols-2 gap-4 pt-4">
-        <div>{{ $t('anonymous-mode') }}</div>
-        <div class="flex justify-end">
-          <NSwitch v-model:value="anonymousMode" />
+        <NInput
+          v-model:value="holeProxy"
+          type="text"
+          :placeholder="$t('hole-proxy')"
+        />
+        <div class="grid grid-cols-2 gap-4">
+          <div>{{ $t('anonymous-mode') }}</div>
+          <div class="flex justify-end">
+            <NSwitch v-model:value="anonymousMode" />
+          </div>
+          <div>{{ $t('deletion-only') }}</div>
+          <div class="flex justify-end">
+            <NSwitch v-model:value="deletionOnly" />
+          </div>
         </div>
-        <div>{{ $t('deletion-only') }}</div>
-        <div class="flex justify-end">
-          <NSwitch v-model:value="deletionOnly" />
-        </div>
-      </div>
+      </NSpace>
     </NCard>
   </NModal>
   <NModal v-model:show="helpModal">
@@ -117,7 +122,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
 import { useI18n } from 'vue-i18n'
-import { anonymousMode, holeToken } from './api'
+import { anonymousMode, holeToken, holeProxy } from './api'
 import HoleHelp from './HoleHelp.vue'
 import { deletionOnly } from './utils'
 

@@ -54,6 +54,7 @@ export default definePlugin({
       settings: 'Settings',
       'some-keywords': 'Some keywords...',
       'hole-token': 'Hole Token',
+      'hole-proxy': 'Hole Proxy',
       'anonymous-mode': 'Anonymous Mode',
       tips: 'Tips',
       'search-pid-tips':
@@ -79,6 +80,7 @@ export default definePlugin({
       settings: '设置',
       'some-keywords': '搜啥好捏',
       'hole-token': '树洞Token',
+      'hole-proxy': '树洞代理',
       'anonymous-mode': '匿名模式',
       tips: '提示',
       'search-pid-tips': '你输入了一个可能的树洞ID，是否跳转到该树洞？',

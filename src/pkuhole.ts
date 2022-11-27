@@ -1,5 +1,5 @@
 import http from 'http-errors'
-import fetch, { type RequestInit } from 'node-fetch'
+import fetch, { AbortError, FetchError, type RequestInit } from 'node-fetch'
 
 export interface IHole {
   pid: string
@@ -70,7 +70,14 @@ async function fetchApi<T>(url: string, init: RequestInit) {
     return data
   } catch (err) {
     clearTimeout(t)
-    throw err
+    if (http.isHttpError(err)) throw err
+    if (err instanceof AbortError) {
+      throw http.BadGateway(`Upstream timeout`)
+    }
+    if (err instanceof FetchError) {
+      throw http.BadGateway(`Upstream error: ${err.errno ?? 'fetch failed'}`)
+    }
+    throw http.BadGateway(`Upstream error: ${err}`)
   }
 }
 
