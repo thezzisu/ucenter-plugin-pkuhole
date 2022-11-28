@@ -6,7 +6,7 @@
       </template>
       <NSpace>
         <NButton v-for="hole in deletedHoles" :key="hole" type="error">
-          <RouterLink :to="`/hole/recover/${hole}`">
+          <RouterLink :to="`/hole/recover/${hole}`" target="_blank">
             <code>#{{ hole }}</code>
           </RouterLink>
         </NButton>

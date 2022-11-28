@@ -1,7 +1,7 @@
 <template>
   <NCard :segmented="{ content: true }" class="shadow">
     <template #header>
-      <RouterLink :to="`/hole/${hole.pid}`">
+      <RouterLink :to="`/hole/${hole.pid}`" target="_blank">
         <code>#{{ hole.pid }}</code>
       </RouterLink>
     </template>
